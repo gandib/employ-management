@@ -34,7 +34,7 @@ const Signup = () => {
   const onSubmit = async (data) => {
     console.log(data);
     dispatch(createUser({ email: data.email, password: data.password }));
-    setUser(data.email);
+    // setUser(data.email);
   };
 
 

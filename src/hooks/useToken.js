@@ -9,7 +9,7 @@ const useToken = () => {
         // console.log(user)
         const currentUser = { email: email };
         if (email) {
-            fetch(`http://localhost:5000/userlogin`, {
+            fetch(`https://employ-management-server.vercel.app/userlogin`, {
                 method: 'PUT',
                 headers: {
                     'content-type': 'application/json'

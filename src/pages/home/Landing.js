@@ -117,7 +117,7 @@ const Landing = () => {
               />
               <button
                 id='search-button'
-                className='p-2 rounded-full bg-primary  h-14 w-14 grid place-items-center'
+                className='p-2 rounded-full bg-primary  h-14 w-14 grid place-items-center '
               >
                 <BiSearchAlt size='23' color='white' />
               </button>

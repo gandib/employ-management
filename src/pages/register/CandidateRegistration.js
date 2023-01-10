@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { useRegisterMutation } from "../../features/auth/authApi";
+import { useSelector } from "react-redux";
 
 const CandidateRegistration = () => {
   const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control } = useForm();
+  const { user: { email } } = useSelector(state => state.auth);
+  const { handleSubmit, register, control } = useForm({ defaultValues: { email, } });
   const term = useWatch({ control, name: "term" });
   console.log(term);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all")
@@ -16,8 +20,11 @@ const CandidateRegistration = () => {
       .then((data) => setCountries(data));
   }, []);
 
+  const [postUser, { isLoading, isError }] = useRegisterMutation();
+
   const onSubmit = (data) => {
     console.log(data);
+    postUser({ ...data, role: "candidate" });
   };
 
   return (
@@ -39,25 +46,26 @@ const CandidateRegistration = () => {
             <label className='mb-2' htmlFor='firstName'>
               First Name
             </label>
-            <input type='text' id='firstName' {...register("firstName")} />
+            <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='text' id='firstName' {...register("firstName")} />
           </div>
           <div className='flex flex-col w-full max-w-xs'>
             <label className='mb-2' htmlFor='lastName'>
               Last Name
             </label>
-            <input type='text' id='lastName' {...register("lastName")} />
+            <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='text' id='lastName' {...register("lastName")} />
           </div>
           <div className='flex flex-col w-full max-w-xs'>
             <label className='mb-2' htmlFor='email'>
               Email
             </label>
-            <input type='email' id='email' {...register("email")} />
+            <input disabled className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl cursor-not-allowed" type='email' id='email' {...register("email")} />
           </div>
           <div className='flex flex-col w-full max-w-xs'>
             <h1 className='mb-3'>Gender</h1>
             <div className='flex gap-3'>
               <div>
                 <input
+                  className="text-primary focus: border-primary focus:ring-primary h-5 w-5"
                   type='radio'
                   id='male'
                   {...register("gender")}
@@ -69,6 +77,7 @@ const CandidateRegistration = () => {
               </div>
               <div>
                 <input
+                  className="text-primary focus: border-primary focus:ring-primary h-5 w-5"
                   type='radio'
                   id='female'
                   {...register("gender")}
@@ -80,6 +89,7 @@ const CandidateRegistration = () => {
               </div>
               <div>
                 <input
+                  className="text-primary focus: border-primary focus:ring-primary h-5 w-5"
                   type='radio'
                   id='other'
                   {...register("gender")}
@@ -96,7 +106,7 @@ const CandidateRegistration = () => {
             <label className='mb-3' for='country'>
               Country
             </label>
-            <select {...register("country")} id='country'>
+            <select {...register("country")} id='country' className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl">
               {countries
                 .sort((a, b) => a?.name?.common?.localeCompare(b?.name?.common))
                 .map(({ name }) => (
@@ -108,32 +118,32 @@ const CandidateRegistration = () => {
             <label className='mb-2' htmlFor='address'>
               Street Address
             </label>
-            <input type='text' {...register("address")} id='address' />
+            <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='text' {...register("address")} id='address' />
           </div>
           <div className='flex flex-col w-full max-w-xs'>
             <label className='mb-2' htmlFor='city'>
               City
             </label>
-            <input type='text' {...register("city")} id='city' />
+            <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='text' {...register("city")} id='city' />
           </div>
           <div className='flex flex-col w-full max-w-xs'>
             <label className='mb-2' htmlFor='postcode'>
               Postal Code
             </label>
-            <input type='text' {...register("postcode")} id='postcode' />
+            <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='text' {...register("postcode")} id='postcode' />
           </div>
 
           <div className='flex justify-between items-center w-full mt-3'>
             <div className='flex  w-full max-w-xs'>
               <input
-                className='mr-3'
+                className='mr-3 rounded'
                 type='checkbox'
                 {...register("term")}
                 id='terms'
               />
               <label for='terms'>I agree to terms and conditions</label>
             </div>
-            <button disabled={!term} className='btn' type='submit'>
+            <button disabled={!term} className='px-4 py-2 border border-primary text-primary rounded-full hover:bg-primary hover:text-white transition-all hover:px-6 disabled:text-gray-300 disabled:border-gray-300 disabled:hover:px-4 disabled:hover:bg-transparent disabled:cursor-not-allowed' type='submit'>
               Submit
             </button>
           </div>

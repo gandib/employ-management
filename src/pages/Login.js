@@ -1,15 +1,42 @@
+import { async } from "@firebase/util";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.svg";
+import { googleLogin, loginUser } from "../features/auth/authSlice";
+import useToken from "../hooks/useToken";
 const Login = () => {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { email, isLoading, isError, error } = useSelector(state => state.auth);
+  const [token, setToken, setUser] = useToken();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = ({ email, password }) => {
+    setUser(email);
+    dispatch(loginUser({ email, password }));
   };
+
+  const handleGoogleLogin = async () => {
+    dispatch(googleLogin());
+  };
+
+
+
+  useEffect(() => {
+    if (!isLoading && email) {
+      navigate('/');
+    }
+  }, [email, isLoading, navigate]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error, { id: 'loginError' })
+    }
+  }, [isError, error]);
 
   return (
     <div className='flex h-screen items-center'>
@@ -25,13 +52,15 @@ const Login = () => {
                 <label htmlFor='email' className='ml-5'>
                   Email
                 </label>
-                <input type='email' {...register("email")} id='email' />
+                <input className="text-lg py-2 px-5 border border-gray-300 focus:ring-primary rounded-3xl" type='email' {...register("email")} id='email' />
               </div>
               <div className='flex flex-col items-start'>
                 <label htmlFor='password' className='ml-5'>
                   Password
                 </label>
                 <input
+                  className="text-lg py-2 px-5 border border-gray-300 
+                   focus:ring-primary rounded-3xl"
                   type='password'
                   id='password'
                   {...register("password")}
@@ -56,6 +85,13 @@ const Login = () => {
                   </span>
                 </p>
               </div>
+              <button
+                onClick={handleGoogleLogin}
+                type='submit'
+                className='font-bold text-white py-3 rounded-full bg-primary w-full'
+              >
+                Login with Google
+              </button>
             </div>
           </form>
         </div>
